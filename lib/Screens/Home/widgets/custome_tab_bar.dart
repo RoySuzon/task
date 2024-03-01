@@ -8,6 +8,7 @@ class CustomeTabBar extends StatefulWidget {
 }
 
 class _CustomeTabBarState extends State<CustomeTabBar> {
+  bool profileSelect = false;
   int select = 0;
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
 
                 () {
               select = index;
-
+              profileSelect = false;
               setState(() {});
             },
             // : null,
@@ -80,37 +81,47 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
           decoration: BoxDecoration(
             borderRadius: select == TabBarData.tabList.length - 1
                 ? const BorderRadius.only(topRight: Radius.circular(30))
-                : null,
+                : profileSelect
+                    ? const BorderRadius.only(bottomRight: Radius.circular(30))
+                    : null,
             color: Colors.white,
           ),
           width: 100,
         )),
         GestureDetector(
           onTap: () {
-            // select = -2;
-            // setState(() {});
+            select = -2;
+            profileSelect = true;
+            setState(() {});
           },
           child: Container(
-            width: 100,
-            height: 100,
-            color: Colors.white,
-            child: const Column(
+            margin: profileSelect
+                ? const EdgeInsets.symmetric(vertical: 15)
+                : EdgeInsets.zero,
+            width: profileSelect ? 80 : 100,
+            height: profileSelect ? 80 : 100,
+            decoration: BoxDecoration(
+                color: profileSelect ? Colors.red : Colors.white,
+                borderRadius: profileSelect ? BorderRadius.circular(20) : null),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //  TabBarData.tabList[index].child,
-                Center(
+                const Center(
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(
                         'https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp'),
                   ),
                 ),
-                Text(
-                  "Profile",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
-                ),
+                profileSelect
+                    ? const SizedBox()
+                    : const Text(
+                        "Profile",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16),
+                      ),
               ],
             ),
           ),
@@ -137,6 +148,8 @@ class TabBarData {
     // TabBarData(title: 'Home', icon: Icons.home),
     // TabBarData(title: 'Settings', icon: Icons.settings),
     TabBarData(title: 'Phone', icon: Icons.phone),
+    TabBarData(title: 'Phone', icon: Icons.phone),
+    TabBarData(title: 'Shop', icon: Icons.shop),
     TabBarData(title: 'Shop', icon: Icons.shop),
   ];
 }

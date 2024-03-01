@@ -6,7 +6,7 @@ void main() async {
   await Hive.initFlutter();
   var box = await Hive.openBox('userInfo');
   // await box.clear();
-  print(box.values.toList());
+  // print(box.values.toList());
   runApp(const MyApp());
 }
 
@@ -19,8 +19,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFF226168),
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple, brightness: Brightness.dark),
+          seedColor: Colors.white,
+        ),
         useMaterial3: false,
       ),
       home: const SplashScreen(),
