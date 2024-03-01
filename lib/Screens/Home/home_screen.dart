@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/Screens/Home/notifications/notification_scren.dart';
 import 'package:task/Screens/Home/widgets/custome_tab_bar.dart';
-import 'package:task/models/notification_model.dart';
+// import 'package:task/models/notification_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String notificationLength = '';
-  List<NotificationModel> notifications = [];
+  // List<NotificationModel> notifications = [];
   @override
   void initState() {
     ApiController().getNotificationList().then((value) {
@@ -66,9 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        NotificationScreen(notifications: notifications),
-                  ));
+                      builder: (context) => const NotificationScreen()));
             }
             return;
           },
