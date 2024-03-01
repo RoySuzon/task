@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
+import 'package:task/Controllers/api_controller.dart';
 import 'package:task/Screens/Home/home_screen.dart';
+import 'package:task/models/user_info.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,8 +13,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _userNameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _userNameController = TextEditingController(text: '0187832241');
+  final _passwordController = TextEditingController(text: '123456');
+
+  Future isLogin(String userName, String passWord) async {
+    final data =
+        await ApiController().loginApi(userName: userName, passWord: passWord);
+    final user = userInfoFromJson(data);
+    if (user.status == "200") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,25 +59,33 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
               decoration: InputDecoration(
                   hintText: 'Password', border: OutlineInputBorder()),
-              smartDashesType: SmartDashesType.enabled,
+
               // obscuringCharacter: '*',
               keyboardType: TextInputType.visiblePassword,
-              onChanged: (value) {},
-              onSubmitted: (text) {
-                print('Submitted: $text');
-              },
             ),
             SizedBox(height: 16),
             MaterialButton(
               minWidth: double.infinity,
               height: 50,
               color: Colors.green,
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomeScreen(),
-                    ));
+              onPressed: () async {
+                if (_userNameController.text.trim().isNotEmpty &&
+                    _passwordController.text.trim().isNotEmpty) {
+                  await ApiController()
+                      .loginApi(
+                          userName: _userNameController.text.toString().trim(),
+                          passWord: _passwordController.text.toString().trim())
+                      .then((value) async {
+                    await Hive.box('userInfo').put('userInfo', value);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ));
+                  });
+                } else {
+                  print('error');
+                }
               },
               child: Text('Sign In'),
             ),

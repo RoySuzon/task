@@ -8,6 +8,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.red,
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
+        ],
         title: const Text('Home Screen'),
       ),
       body: const CustomeTabBar(),

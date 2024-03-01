@@ -14,11 +14,11 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Container(
-          height: 10,
-          width: 100,
-          color: Colors.red,
-        ),
+        // Container(
+        //   height: 10,
+        //   width: 100,
+        //   color: Colors.red,
+        // ),
         ...List.generate(TabBarData.tabList.length, (index) {
           return GestureDetector(
             onTap:
