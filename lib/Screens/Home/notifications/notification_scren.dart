@@ -96,6 +96,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
             loading
                 ? myCircularPrograce()
                 : ListView.separated(
+                    controller: _scrollController,
+                    physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
                     itemBuilder: (context, index) => Container(
