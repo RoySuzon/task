@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
@@ -251,11 +250,3 @@ getToast(String msg) {
       textColor: Colors.white,
       fontSize: 16.0);
 }
-
-
-
-// class CRUDNotification extends GetxController {
-
-// bool loading=
-  
-// }

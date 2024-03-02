@@ -7,7 +7,7 @@ import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
 
 bool isMarked = false;
-List<String> markList = [];
+List<NotificationModel> markList = [];
 
 List<NotificationModel> tempNotificationList = [];
 
@@ -53,10 +53,12 @@ class _InfiniteScrollState extends State<InfiniteScroll> {
                 leading: IconButton(
                     onPressed: () {
                       for (var element in tempNotificationList) {
-                        markList.add(element.id.toString());
+                        markList.add(element);
                       }
+                      markList.removeWhere(
+                          (element) => element.readStatus == "Yes");
                       setState(() {});
-                      print(markList);
+                      print(markList.length);
                     },
                     icon: Icon(
                       markList.length != tempNotificationList.length
@@ -180,6 +182,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
         } else {
           // Display the paginated data
           final items = snapshot.data;
+          bool marked = false;
           return ListView(
             // reverse: true,
             padding: EdgeInsets.zero,
@@ -207,6 +210,18 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                           isMarked
                               ? IconButton(
                                   onPressed: () {
+                                    marked = !marked;
+                                    print(marked);
+                                    if (marked == false) {
+                                      markList.remove(tempNotification[index]);
+                                      // marked = false;
+                                      print(marked);
+                                      setState(() {});
+                                    } else {
+                                      markList.add(tempNotification[index]);
+                                      // marked = false;
+                                    }
+                                    print(markList.length);
                                     // markList.where((element) {
                                     //   element ==
                                     //   return false;
@@ -236,7 +251,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                                     //   markList.add(tempNotification[index]);
                                     // }
                                   },
-                                  icon: Icon(Icons.check_box))
+                                  icon: Icon(Icons.check_box_outline_blank))
                               : SizedBox(),
                           Expanded(
                             child: Column(
@@ -257,7 +272,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                                             size: 10,
                                           ),
                                     Text(
-                                      tempNotification[index].title.toString(),
+                                      tempNotification[index].id.toString(),
                                       style: TextStyle(color: Colors.red),
                                     ),
                                     Expanded(

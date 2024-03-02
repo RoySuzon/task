@@ -147,9 +147,9 @@ class TabBarData {
     TabBarData(title: 'Settings', icon: Icons.settings),
     // TabBarData(title: 'Home', icon: Icons.home),
     // TabBarData(title: 'Settings', icon: Icons.settings),
-    TabBarData(title: 'Phone', icon: Icons.phone),
-    TabBarData(title: 'Phone', icon: Icons.phone),
-    TabBarData(title: 'Shop', icon: Icons.shop),
+    // TabBarData(title: 'Phone', icon: Icons.phone),
+    // TabBarData(title: 'Phone', icon: Icons.phone),
+    // TabBarData(title: 'Shop', icon: Icons.shop),
     TabBarData(title: 'Shop', icon: Icons.shop),
   ];
 }

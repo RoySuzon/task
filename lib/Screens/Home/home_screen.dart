@@ -27,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     //   //     jsonEncode(jsonDecode(value)['data']['results']));
     //   setState(() {});
     // });
-
     super.initState();
   }
 
@@ -42,11 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
             future: ApiController().getNotificationList(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return _notifications(
-                  notificationLength = jsonDecode(snapshot.data)['data']
-                          ['totalunread']
-                      .toString(),
-                );
+                return _notifications(notificationLength =
+                    jsonDecode(snapshot.data)['data']['totalunread']
+                        .toString());
               } else {
                 return _notifications('');
               }

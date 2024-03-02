@@ -41,10 +41,10 @@ class ApiController {
   Future<dynamic> getNotificationList({int? page, int? pageSize}) async {
     try {
       final res = await get(
-          Uri.parse(
-              "${baseUrl}get_notification?page=${page ?? ''}&pageSize=${pageSize ?? ''}"),
-          headers: getHeader(await getToken()));
-      jsonDecode(res.body)['status'] == "200";
+        Uri.parse("http://127.0.0.1:3600/"),
+      );
+      // headers: getHeader(await getToken()));
+      // jsonDecode(res.body)['status'] == "200";
       return res.body;
     } catch (e) {
       return jsonEncode({
@@ -54,4 +54,20 @@ class ApiController {
       });
     }
   }
+  // Future<dynamic> getNotificationList({int? page, int? pageSize}) async {
+  //   try {
+  //     final res = await get(
+  //         Uri.parse(
+  //             "${baseUrl}get_notification?page=${page ?? ''}&pageSize=${pageSize ?? ''}"),
+  //         headers: getHeader(await getToken()));
+  //     jsonDecode(res.body)['status'] == "200";
+  //     return res.body;
+  //   } catch (e) {
+  //     return jsonEncode({
+  //       "status": '404',
+  //       "message": 'Link is not Vailid',
+  //       "data": {"totalunread": ''}
+  //     });
+  //   }
+  // }
 }

@@ -1,11 +1,6 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:task/Controllers/api_controller.dart';
-import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
 
 void main() async {
