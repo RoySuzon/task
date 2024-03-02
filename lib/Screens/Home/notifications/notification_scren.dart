@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
@@ -22,7 +22,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   bool bottomCircular = false;
   int pageSize = 20;
 
-  getNotification(int page, int pageSize) async {
+  Future getNotification(int page, int pageSize) async {
     loading = true;
     setState(() {});
     await ApiController()
@@ -56,10 +56,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     bottomCircular = false;
     setState(() {});
   }
-
-  final _controller = PageController();
-
-  final _scrollController = ScrollController();
 
   int page = 1;
   @override
@@ -96,7 +92,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
             loading
                 ? myCircularPrograce()
                 : ListView.separated(
-                    controller: _scrollController,
                     physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
@@ -256,3 +251,11 @@ getToast(String msg) {
       textColor: Colors.white,
       fontSize: 16.0);
 }
+
+
+
+// class CRUDNotification extends GetxController {
+
+// bool loading=
+  
+// }

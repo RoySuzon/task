@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:task/Controllers/api_controller.dart';
-import 'package:task/Screens/Home/notifications/notification_scren.dart';
+import 'package:task/Screens/Home/notifications/infinity_scroll_screen.dart';
 import 'package:task/Screens/Home/widgets/custome_tab_bar.dart';
 // import 'package:task/models/notification_model.dart';
 
@@ -18,15 +18,15 @@ class _HomeScreenState extends State<HomeScreen> {
   // List<NotificationModel> notifications = [];
   @override
   void initState() {
-    ApiController().getNotificationList().then((value) {
-      // print(jsonDecode(value)['data']['results']);
-      // print(value);
-      notificationLength = jsonDecode(value)['data']['totalunread'].toString();
-      // print(notificationLength);
-      // notifications = notificationModelFromJson(
-      //     jsonEncode(jsonDecode(value)['data']['results']));
-      setState(() {});
-    });
+    // ApiController().getNotificationList().then((value) {
+    //   // print(jsonDecode(value)['data']['results']);
+    //   // print(value);
+    //   notificationLength = jsonDecode(value)['data']['totalunread'].toString();
+    //   // print(notificationLength);
+    //   // notifications = notificationModelFromJson(
+    //   //     jsonEncode(jsonDecode(value)['data']['results']));
+    //   setState(() {});
+    // });
 
     super.initState();
   }
@@ -43,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return _notifications(
-                  jsonDecode(snapshot.data)['data']['totalunread'].toString(),
+                  notificationLength = jsonDecode(snapshot.data)['data']
+                          ['totalunread']
+                      .toString(),
                 );
               } else {
                 return _notifications('');
@@ -61,15 +63,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       children: [
         IconButton(
-          onPressed: () async {
-            if (notificationLength != '') {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const NotificationScreen()));
-            }
-            return;
-          },
+          disabledColor: Colors.red,
+          onPressed: notificationLength == ''
+              ? null
+              : () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => InfiniteScroll()));
+                  // builder: (context) => const NotificationScreen()));
+                },
           icon: Icon(Icons.notifications),
         ),
         notification == ''
