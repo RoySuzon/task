@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+// import 'package:get/route_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
 import 'package:task/splash_screen.dart';
 
 void main() async {
@@ -21,13 +22,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF226168),
+        // scaffoldBackgroundColor: Color(0xFF226168),
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.white,
         ),
         useMaterial3: false,
       ),
-      home: const SplashScreen(),
+      home:  NotificationScreenPrectice(),
     );
   }
 }

@@ -18,11 +18,8 @@ class _InfiniteScrollState extends State<InfiniteScroll> {
   @override
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
-
     return InfiniteScrollPagination(
-      scrollController: scrollController,
-      fetchDataFunction: fetchData,
-    );
+        scrollController: scrollController, fetchDataFunction: fetchData);
   }
 }
 
