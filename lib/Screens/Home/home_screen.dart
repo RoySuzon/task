@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       // backgroundColor: Colors.blueGrey,
       appBar: AppBar(
+        centerTitle: true,
         // backgroundColor: Colors.red,
         actions: [
           FutureBuilder(

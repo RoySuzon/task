@@ -19,7 +19,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   List<NotificationModel> tempNotification = [];
   bool loading = false;
   bool bottomCircular = false;
-  int pageSize = 20;
+  int pageSize = 10;
 
   Future getNotification(int page, int pageSize) async {
     loading = true;

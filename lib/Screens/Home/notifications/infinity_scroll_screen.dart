@@ -2,14 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
 
 bool isMarked = false;
 List<NotificationModel> markList = [];
-
-List<NotificationModel> tempNotificationList = [];
+bool markAll = false;
+List<NotificationModel> tempNotification = [];
+late int length;
+bool marked = false;
+List<int> indexList = [];
 
 class InfiniteScroll extends StatefulWidget {
   const InfiniteScroll({super.key});
@@ -23,59 +27,9 @@ class _InfiniteScrollState extends State<InfiniteScroll> {
   Widget build(BuildContext context) {
     final ScrollController scrollController = ScrollController();
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Notifications'),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              // page++;
-              // getNextNotification(page, pageSize);
-              // setState(() {});
-              if (!isMarked) {
-                isMarked = true;
-              } else {
-                isMarked = false;
-              }
-              setState(() {});
-            },
-            child: const Icon(Icons.edit),
-          ),
-          const SizedBox(width: 16)
-        ],
-      ),
-      bottomSheet: isMarked
-          ? Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: ListTile(
-                leading: IconButton(
-                    onPressed: () {
-                      for (var element in tempNotificationList) {
-                        markList.add(element);
-                      }
-                      markList.removeWhere(
-                          (element) => element.readStatus == "Yes");
-                      setState(() {});
-                      print(markList.length);
-                    },
-                    icon: Icon(
-                      markList.length != tempNotificationList.length
-                          ? Icons.check_box_outline_blank_outlined
-                          : Icons.check_box,
-                      color: Colors.black,
-                    )),
-                title: Text('Mark All'),
-              ),
-            )
-          : SizedBox(),
-      body: SafeArea(
-        child: InfiniteScrollPagination(
-          scrollController: scrollController,
-          fetchDataFunction: fetchData,
-        ),
-      ),
+    return InfiniteScrollPagination(
+      scrollController: scrollController,
+      fetchDataFunction: fetchData,
     );
   }
 }
@@ -167,161 +121,202 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<dynamic>>(
-      stream: dataStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          // Display a loading indicator
-          return myCircularPrograce(color: Colors.red);
-        } else if (snapshot.hasError) {
-          // Handle errors
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          // Display a message when there is no data
-          return const Center(child: Text('No data available.'));
-        } else {
-          // Display the paginated data
-          final items = snapshot.data;
-          bool marked = false;
-          return ListView(
-            // reverse: true,
-            padding: EdgeInsets.zero,
-            controller: _scrollController,
-            physics: BouncingScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              ListView.separated(
-                padding: EdgeInsets.zero,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: items!.length,
-                itemBuilder: (context, index) {
-                  final tempNotification =
-                      notificationModelFromJson(items.toString());
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+              isMarked = false;
+            },
+            icon: Icon(Icons.arrow_back)),
+        centerTitle: true,
+        title: const Text('Notifications'),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              isMarked = !isMarked;
+              setState(() {});
+            },
+            child: const Icon(Icons.edit),
+          ),
+          const SizedBox(width: 16)
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<List<dynamic>>(
+              stream: dataStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Display a loading indicator
+                  return myCircularPrograce(color: Colors.red);
+                } else if (snapshot.hasError) {
+                  // Handle errors
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  // Display a message when there is no data
+                  return const Center(child: Text('No data available.'));
+                } else {
+                  // Display the paginated data
+                  final items = snapshot.data;
 
-                  tempNotificationList = tempNotification;
+                  return ListView(
+                    // reverse: true,
+                    padding: EdgeInsets.zero,
+                    controller: _scrollController,
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    children: [
+                      ListView.separated(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: items!.length,
+                        itemBuilder: (context, index) {
+                          tempNotification =
+                              notificationModelFromJson(items.toString());
 
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      color: Colors.white,
-                      child: Row(
-                        children: [
-                          isMarked
-                              ? IconButton(
-                                  onPressed: () {
-                                    marked = !marked;
-                                    print(marked);
-                                    if (marked == false) {
-                                      markList.remove(tempNotification[index]);
-                                      // marked = false;
-                                      print(marked);
-                                      setState(() {});
-                                    } else {
-                                      markList.add(tempNotification[index]);
-                                      // marked = false;
-                                    }
-                                    print(markList.length);
-                                    // markList.where((element) {
-                                    //   element ==
-                                    //   return false;
-                                    // });
+                          length = tempNotification.length;
 
-                                    // bool a ?    markList.where((element) {
-                                    //    element.contains(tempNotification[index]
-                                    //             .id
-                                    //             .toString());
-                                    // }) :false; // markList
-                                    // // if (markList.isNotEmpty) {
-                                    // markList.add(
-                                    //     tempNotification[index].id.toString());
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Container(
+                              color: Colors.white,
+                              child: Row(
+                                children: [
+                                  isMarked
+                                      ? IconButton(
+                                          onPressed: () {
+                                            if (indexList.contains(index)) {
+                                              indexList.remove(index);
+                                              markList.remove(
+                                                  tempNotification[index]);
+                                            } else {
+                                              indexList.add(index);
+                                              markList
+                                                  .add(tempNotification[index]);
+                                            }
 
-                                    // print(markList.length);
+                                            // print(markList.length);
 
-                                    // markList.removeWhere((element) =>
-                                    //     element.contains(tempNotification[index]
-                                    //         .id
-                                    //         .toString()));
-
-                                    // setState(() {});
-                                    print(markList.toList());
-
-                                    // if (markList.contains(markList[index].id)) {
-                                    // } else {
-                                    //   markList.add(tempNotification[index]);
-                                    // }
-                                  },
-                                  icon: Icon(Icons.check_box_outline_blank))
-                              : SizedBox(),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    tempNotification[index]
-                                                .readStatus
-                                                .toString() ==
-                                            'Yes'
-                                        ? SizedBox(
-                                            // width: 10,
-                                            )
-                                        : Icon(
-                                            Icons.circle,
-                                            color: Colors.red,
-                                            size: 10,
-                                          ),
-                                    Text(
-                                      tempNotification[index].id.toString(),
-                                      style: TextStyle(color: Colors.red),
+                                            setState(() {});
+                                          },
+                                          icon: Icon(indexList
+                                                      .contains(index) ||
+                                                  markAll
+                                              ? Icons.check_box
+                                              : Icons.check_box_outline_blank))
+                                      : SizedBox(),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            tempNotification[index]
+                                                        .readStatus
+                                                        .toString() ==
+                                                    'Yes'
+                                                ? SizedBox(
+                                                    // width: 10,
+                                                    )
+                                                : Icon(
+                                                    Icons.circle,
+                                                    color: Colors.red,
+                                                    size: 10,
+                                                  ),
+                                            Text(
+                                              tempNotification[index]
+                                                  .id
+                                                  .toString(),
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                tempNotification[index]
+                                                    .createdAt
+                                                    .toString(),
+                                                textAlign: TextAlign.end,
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 15),
+                                        Text(
+                                          tempNotification[index]
+                                              .description
+                                              .toString(),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ],
                                     ),
-                                    Expanded(
-                                      child: Text(
-                                        tempNotification[index]
-                                            .createdAt
-                                            .toString(),
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 15),
-                                Text(
-                                  tempNotification[index]
-                                      .description
-                                      .toString(),
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 0,
+                            thickness: 2,
+                            endIndent: 20,
+                            indent: 20,
+                            color: Colors.red,
+                          );
+                        },
                       ),
-                    ),
+                      if (_isFetchingData)
+                        const Center(
+                            child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: CircularProgressIndicator(),
+                        )),
+                    ],
                   );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return Divider(
-                    height: 0,
-                    thickness: 2,
-                    endIndent: 20,
-                    indent: 20,
-                    color: Colors.red,
-                  );
-                },
-              ),
-              if (_isFetchingData)
-                const Center(
-                    child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircularProgressIndicator(),
-                )),
-            ],
-          );
-        }
-      },
+                }
+              },
+            ),
+          ),
+          isMarked
+              ? Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: ListTile(
+                    leading: IconButton(
+                        onPressed: () {
+                          markAll = markedAll(markAll);
+                          if (markAll) {
+                            for (var element in tempNotification) {
+                              markList.add(element);
+                            }
+                          } else {
+                            // if (markList.length == length) {}
+                            markList.clear();
+                            indexList.clear();
+                          }
+                          setState(() {});
+
+                          print(markList.length);
+                        },
+                        icon: Icon(
+                          markAll || length == markList.length
+                              ? Icons.check_box
+                              : Icons.check_box_outline_blank_outlined,
+                          color: Colors.black,
+                        )),
+                    title: Text('Mark All'),
+                  ),
+                )
+              : SizedBox()
+        ],
+      ),
     );
   }
 
@@ -388,3 +383,11 @@ Future<List<dynamic>> fetchData(int currentPage, int pageSize) async {
 //     throw Exception('Failed to fetch data');
 //   }
 // }
+
+bool markedAll(bool marked) {
+  return marked = !marked;
+}
+// markList.removeWhere(
+//     (element) => element.readStatus == "Yes");
+
+class MakedController extends GetxController {}
