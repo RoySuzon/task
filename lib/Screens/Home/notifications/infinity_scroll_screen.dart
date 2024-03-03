@@ -7,14 +7,6 @@ import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
 
-bool isMarked = false;
-List<NotificationModel> markList = [];
-bool markAll = false;
-List<NotificationModel> tempNotification = [];
-late int length;
-bool marked = false;
-List<int> indexList = [];
-
 class InfiniteScroll extends StatefulWidget {
   const InfiniteScroll({super.key});
 
@@ -55,7 +47,13 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
       StreamController<List<dynamic>>();
   Stream<List<dynamic>> get dataStream => _dataStreamController.stream;
   final List<dynamic> _currentItems = [];
-
+  bool isMarked = false;
+  List<NotificationModel> markList = [];
+  bool markAll = false;
+  List<NotificationModel> tempNotification = [];
+  late int length;
+  bool marked = false;
+  List<int> indexList = [];
   int _currentPage = 1;
   final int _pageSize = 10;
   late final ScrollController _scrollController;
