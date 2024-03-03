@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:task/Screens/Auth/login_screen.dart';
 import 'package:task/Screens/Home/home_screen.dart';
+import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

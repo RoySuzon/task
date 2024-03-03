@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/Screens/Home/notifications/infinity_scroll_screen.dart';
+import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
 import 'package:task/Screens/Home/widgets/custome_tab_bar.dart';
 // import 'package:task/models/notification_model.dart';
 
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => InfiniteScroll()));
+                          builder: (context) => NotificationScreenPrectice()));
                   // builder: (context) => const NotificationScreen()));
                 },
           icon: Icon(Icons.notifications),

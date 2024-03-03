@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
@@ -41,15 +42,18 @@ class _NotificationScreenPrecticeState
       appBar: AppBar(
         title: const Text('Select Item'),
         actions: [
-          IconButton(
-              onPressed: () {
-                setState(() {
-                  select = !select
-                      ? isSelectionMode = selectedFlag.containsValue(false)
-                      : isSelectionMode = selectedFlag.containsValue(true);
-                });
-              },
-              icon: Icon(select ? Icons.edit : Icons.remove))
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    select = !select
+                        ? isSelectionMode = selectedFlag.containsValue(false)
+                        : isSelectionMode = selectedFlag.containsValue(true);
+                  });
+                },
+                child: Center(child: !select ?Icon(  Icons.edit ):Text('Cancel'))),
+          )
         ],
       ),
       body: loading
@@ -131,14 +135,15 @@ class _NotificationScreenPrecticeState
                   : Icons.check_box_outline_blank_outlined,
             ),
             title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text('All'),
                 TextButton(onPressed: () {}, child: Text('Delete All')),
                 TextButton(
                     onPressed: () {
                       
-                    },
-                    child: Text('Delete All')),
+                    }, 
+                    child: Text('Mark as read')),
               ],
             ),
           ),
