@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
@@ -20,17 +19,23 @@ class _NotificationScreenPrecticeState
   List<NotificationModel> staticData = [];
   List<NotificationModel> markedList = [];
   Map<int, bool> selectedFlag = {};
-  @override
-  void initState() {
-    loading = !loading;
 
+  fetchData() async {
+    loading = !loading;
     setState(() {});
-    ApiController().getNotificationList(page: 1, pageSize: 20).then((value) {
+    await ApiController()
+        .getNotificationList(page: 1, pageSize: 100)
+        .then((value) {
       staticData = notificationModelFromJson(
           jsonEncode(jsonDecode(value)['data']['results']));
       loading = !loading;
       setState(() {});
     });
+  }
+
+  @override
+  void initState() {
+    fetchData();
 
     super.initState();
   }
@@ -41,19 +46,25 @@ class _NotificationScreenPrecticeState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Select Item'),
+        title: const Text('Notifications'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
                 onTap: () {
-                  setState(() {
-                    select = !select
-                        ? isSelectionMode = selectedFlag.containsValue(false)
-                        : isSelectionMode = selectedFlag.containsValue(true);
-                  });
+                  isSelectionMode = !isSelectionMode;
+                  isSelectionMode
+                      ? selectedFlag.containsValue(false)
+                      : selectedFlag.containsValue(true);
+                  // : isSelectionMode = selectedFlag.containsValue(true);
+                  selectedFlag.updateAll((key, value) => false);
+                  if (!isSelectionMode) markedList.clear();
+                  print(markedList.length);
+                  setState(() {});
                 },
-                child: Center(child: !select ?Icon(  Icons.edit ):Text('Cancel'))),
+                child: Center(
+                    child:
+                        !isSelectionMode ? Icon(Icons.edit) : Text('Cancel'))),
           )
         ],
       ),
@@ -62,20 +73,33 @@ class _NotificationScreenPrecticeState
           : Column(
               children: [
                 Expanded(
-                  child: ListView.builder(
-                    itemBuilder: (builder, index) {
-                      final data = staticData[index];
-                      selectedFlag[index] = selectedFlag[index] ?? false;
-                      bool isSelected = selectedFlag[index]!;
-                      return ListTile(
-                        onLongPress: () => onLongPress(isSelected, index),
-                        onTap: () => onTap(isSelected, index),
-                        title: Text("${data.id}"),
-                        subtitle: Text("${data.title}"),
-                        leading: _buildSelectIcon(isSelected, index),
+                  child: FutureBuilder(
+                    future: ApiController()
+                        .getNotificationList(page: 1, pageSize: 100),
+                    builder: (context, snapshot) {
+                      return ListView.builder(
+                        itemBuilder: (builder, index) {
+                          final data = staticData[index];
+                          selectedFlag[index] = selectedFlag[index] ?? false;
+                          bool isSelected = selectedFlag[index]!;
+                          return ListTile(
+                            onLongPress: () => onLongPress(isSelected, index),
+                            onTap: () => onTap(isSelected, index),
+                            title: Row(
+                              children: [
+                                data.readStatus != 'Yes'
+                                    ? Icon(Icons.circle, size: 10)
+                                    : SizedBox(),
+                                Text("  ${data.title} ${data.createdAt}"),
+                              ],
+                            ),
+                            subtitle: Text("${data.title}"),
+                            leading: _buildSelectIcon(isSelected, index),
+                          );
+                        },
+                        itemCount: staticData.length,
                       );
                     },
-                    itemCount: staticData.length,
                   ),
                 ),
                 _buildSelectAllButton()
@@ -95,6 +119,9 @@ class _NotificationScreenPrecticeState
         }
         print(markedList.length);
         isSelectionMode = selectedFlag.containsValue(true);
+        if (isSelectionMode == false) {
+          select = false;
+        }
       });
     } else {
       // Open Detail Page
@@ -117,7 +144,7 @@ class _NotificationScreenPrecticeState
       );
     } else {
       return CircleAvatar(
-        child: Text('${(index + 1).toString()}'),
+        child: Text(staticData[index].id.toString()),
       );
     }
   }
@@ -138,12 +165,41 @@ class _NotificationScreenPrecticeState
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text('All'),
-                TextButton(onPressed: () {}, child: Text('Delete All')),
+                const Text('All'),
                 TextButton(
-                    onPressed: () {
-                      
-                    }, 
+                    onPressed: () async {
+                      List<int> ids = [];
+                      for (var element in markedList) {
+                        ids.add(element.id!);
+                      }
+                      await ApiController().deleteApi(ids);
+                      loading = !loading;
+                      setState(() {});
+                      fetchData();
+                      loading = !loading;
+                      isSelectionMode = false;
+                      setState(() {});
+                    },
+                    child: Text(markedList.length == staticData.length
+                        ? 'Delete All'
+                        : "Delete")),
+                TextButton(
+                    onPressed: () async {
+                      List<int> ids = [];
+                      markedList.removeWhere(
+                          (element) => element.readStatus == 'Yes');
+                      for (var element in markedList) {
+                        ids.add(element.id!);
+                        print(ids);
+                      }
+                      await ApiController().markAsReadApi(ids);
+                      loading = !loading;
+                      setState(() {});
+                      fetchData();
+                      loading = !loading;
+                      isSelectionMode = false;
+                      setState(() {});
+                    },
                     child: Text('Mark as read')),
               ],
             ),
@@ -168,7 +224,7 @@ class _NotificationScreenPrecticeState
     // If there will be no false then it will de-select all
     selectedFlag.updateAll((key, value) => isFalseAvailable);
     setState(() {
-      // isSelectionMode = selectedFlag.containsValue(true);
+      isSelectionMode = selectedFlag.containsValue(true);
     });
   }
 }

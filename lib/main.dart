@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:get/route_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:task/Screens/Auth/login_screen.dart';
-import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
+
 import 'package:task/splash_screen.dart';
 
 void main() async {
