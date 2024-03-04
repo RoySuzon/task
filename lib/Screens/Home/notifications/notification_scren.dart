@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
+import 'package:task/Common/app_color.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
@@ -238,13 +239,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 }
 
-getToast(String msg) {
+getToast(String msg,{Color? color}) {
   Fluttertoast.showToast(
+
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.TOP,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
+      backgroundColor: color?? AppColor.peachColor,
       textColor: Colors.white,
       fontSize: 16.0);
 }

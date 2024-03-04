@@ -37,9 +37,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.mainColor,
-      // appBar: AppBar(
-      //   title: const Text('Login Screen'),
-      // ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('L O G I N'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -95,13 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           getToast(userInfoFromJson(value).message.toString());
                     } else {
                       loading = false;
-                      getToast(jsonDecode(value)['message'].toString());
+                      getToast(jsonDecode(value)['message'].toString(),color: Colors.red);
                       setState(() {});
                       return;
                     }
                   });
                 } else {
-                  getToast('Please check password or UserName');
+                  getToast('Please check password or UserName',color: Colors.red);
                   print('error');
                 }
               },
