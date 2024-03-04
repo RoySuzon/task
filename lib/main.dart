@@ -8,7 +8,7 @@ import 'package:task/splash_screen.dart';
 
 void main() async {
   await Hive.initFlutter();
-  var box = await Hive.openBox('userInfo');
+   await Hive.openBox('userInfo');
   // await box.clear();
   // print(box.values.toList());
   runApp(const MyApp());

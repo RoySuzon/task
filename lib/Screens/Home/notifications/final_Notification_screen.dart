@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:task/Common/app_color.dart';
@@ -109,6 +110,14 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
   }
 
   @override
+  void dispose() {
+    _dataStreamController.close();
+    //we do not have control cover the _scrollController so it should not be disposed here
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: AppColor.mainColor,
@@ -126,12 +135,14 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                   // : isSelectionMode = selectedFlag.containsValue(true);
                   selectedFlag.updateAll((key, value) => false);
                   if (!isSelectionMode) markedList.clear();
-                  print(markedList.length);
+                  if (kDebugMode) {
+                    print(markedList.length);
+                  }
                   setState(() {});
                 },
                 child: Center(
                     child:
-                        !isSelectionMode ? Icon(Icons.edit) : Text('Cancel'))),
+                        !isSelectionMode ? const Icon(Icons.edit) : const Text('Cancel'))),
           )
         ],
       ),
@@ -147,23 +158,28 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                 } else if (snapshot.hasError) {
                   // Handle errors
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  // Display a message when there is no data
-                  return const Center(child: Text('No data available.'));
-                } else {
+                }
+                //  else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                //   // Display a message when there is no data
+                //   return const Center(child: Text('No data available.'));
+                // }
+                else {
                   // Display the paginated data
 
                   staticData = snapshot.data!
                       .map((e) => Result.fromJson(jsonDecode(e)))
                       .toList();
+                if(staticData.isEmpty){
+                    staticData = demoResults;
+                }
                   return ListView(
                     // reverse: true,
                     padding: EdgeInsets.zero,
                     controller: _scrollController,
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     children: [
-                      ListView.builder(
+                      ListView.separated(
                         // padding: EdgeInsets.symmetric(vertical: 5),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -172,23 +188,30 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                           Result data = staticData[index];
                           selectedFlag[index] = selectedFlag[index] ?? false;
                           bool isSelected = selectedFlag[index]!;
-                          return Card(
-                            color: AppColor.greyColor.withOpacity(.7),
-                            shadowColor: AppColor.greyColor,
-                            child: ListTile(
-                              onLongPress: () => onLongPress(isSelected, index),
-                              onTap: () => onTap(isSelected, index),
-                              title: Row(
-                                children: [
-                                  data.readStatus != 'Yes'
-                                      ? Icon(Icons.circle, size: 10)
-                                      : SizedBox(),
-                                  Text("  ${data.title}  ${ DateFormat.yMMMMEEEEd().format(data.updatedAt??DateTime.now())}"),
-                                ],
-                              ),
-                              subtitle: Text("${data.title}"),
-                              leading: _buildSelectIcon(isSelected, index),
+                          return ListTile(
+                            tileColor: AppColor.greyColor.withOpacity(.7),
+                            // trailing: CircleAvatar(
+                            //   backgroundImage: NetworkImage(data.image ??
+                            //       'https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp'),
+                            // ),
+                            onLongPress: () => onLongPress(isSelected, index),
+                            onTap: () => onTap(isSelected, index),
+                            title: Row(
+                              children: [
+                                data.readStatus != 'Yes'
+                                    ? const Icon(Icons.circle, size: 10)
+                                    : const SizedBox(),
+                                Text("  ${data.title}"),
+                              ],
                             ),
+                            subtitle: Text(
+                                "Create: ${DateFormat.yMd().format(data.createdAt ?? DateTime.now())} - Update: ${DateFormat.yMd().format(data.updatedAt ?? DateTime.now())}"),
+                            leading: _buildSelectIcon(isSelected, index),
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return const SizedBox(
+                            height: 2
                           );
                         },
                       ),
@@ -210,14 +233,6 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
     );
   }
 
-  @override
-  void dispose() {
-    _dataStreamController.close();
-    //we do not have control cover the _scrollController so it should not be disposed here
-    _scrollController.dispose();
-    super.dispose();
-  }
-
   void onLongPress(bool isSelected, int index) {
     setState(() {
       selectedFlag[index] = !isSelected;
@@ -229,15 +244,15 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
   Widget _buildSelectIcon(bool isSelected, int index) {
     if (isSelectionMode) {
       return Icon(
-        isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-        color: Theme.of(context).primaryColor,
+        isSelected ? Icons.check : Icons.radio_button_unchecked,
+        color: isSelectionMode ? AppColor.mainColor : Colors.red,
       );
     } else {
       return CircleAvatar(
         backgroundColor: AppColor.mainColor,
         child: Text(
           staticData[index].id.toString(),
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
       );
     }
@@ -246,93 +261,102 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
   Widget _buildSelectAllButton() {
     bool isFalseAvailable = selectedFlag.containsValue(false);
     if (isSelectionMode) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 22),
-        child: Card(
-          child: ListTile(
-            onTap: _selectAll,
-            leading: Icon(
-              !isFalseAvailable
-                  ? Icons.check_box
-                  : Icons.check_box_outline_blank_outlined,
-              color: Theme.of(context).primaryColor,
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const Text('All'),
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(AppColor.mainColor)),
-                    //Delete Function
-                    onPressed: () async {
-                      List<int> ids = [];
-                      for (var element in markedList) {
-                        ids.add(element.id!);
-                      }
-                      await ApiController().deleteApi(ids).then((value) {
-                         if(  jsonDecode(value)['status'] == "200")
+      return SizedBox(
+        height: 80,
+        child: ListTile(
+          tileColor: AppColor.greyColor,
+          leading: Icon(
+            !isFalseAvailable
+                ? Icons.check 
+                : Icons.radio_button_unchecked,
+            color: AppColor.mainColor,
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ActionChip(
+                  backgroundColor: AppColor.mainColor,
+                  onPressed: () {
+                    _selectAll();
+                  },
+                  label: const Text(
+                    "All Select",
+                    style: TextStyle(color: Colors.white),
+                  )),
+              ActionChip(
+                  backgroundColor: AppColor.mainColor,
+                  onPressed: () async {
+                    List<int> ids = [];
+                    for (var element in markedList) {
+                      ids.add(element.id!);
+                    }
+                    await ApiController().deleteApi(ids).then((value) {
+                      if (jsonDecode(value)['status'] == "200") {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FinalNotificationScreen(),
+                              builder: (context) => const FinalNotificationScreen(),
                             ));
-                            return;
-                      });
-                      loading = !loading;
-                      setState(() {});
-                      // fetchData();
-                      loading = !loading;
-                      isSelectionMode = false;
-                      setState(() {});
-                    },
-                    child: Text(style: TextStyle(color: AppColor.peachColor), markedList.length == staticData.length
+                      }
+                      return;
+                    });
+                    loading = !loading;
+                    setState(() {});
+                    // fetchData();
+                    loading = !loading;
+                    isSelectionMode = false;
+                    setState(() {});
+                  },
+                  label: Text(
+                    markedList.length == staticData.length
                         ? 'Delete All'
-                        : "Delete")),
-                TextButton(
-                    onPressed: () async {
-                      List<int> ids = [];
-                      markedList.removeWhere(
-                          (element) => element.readStatus == 'Yes');
+                        : "Delete",
+                    style: const TextStyle(color: Colors.white),
+                  )),
+              ActionChip(
+                  backgroundColor: AppColor.mainColor,
+                  onPressed: () async {
+                    List<int> ids = [];
+                    markedList
+                        .removeWhere((element) => element.readStatus == 'Yes');
 
-                      for (var element in markedList) {
-                        ids.add(element.id!);
-                      }
+                    for (var element in markedList) {
+                      ids.add(element.id!);
+                    }
 
-                      await ApiController().markAsReadApi(ids).then((value) {
-                        if(  jsonDecode(value)['status'] == "200")
+                    await ApiController().markAsReadApi(ids).then((value) {
+                      if (jsonDecode(value)['status'] == "200")
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FinalNotificationScreen(),
+                              builder: (context) => const FinalNotificationScreen(),
                             ));
-                            return;
-                        // if (jsonDecode(value['status']) == "200") {
-                        //   Navigator.pushReplacement(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => FinalNotificationScreen(),
-                        //       ));
-                        // } else {
-                        //   return;
-                        // }
-                      });
-                      loading = !loading;
-                      setState(() {});
-                      // fetchData();
-                      loading = !loading;
-                      isSelectionMode = false;
-                      setState(() {});
-                    },
-                    child: Text('Mark as read')),
-              ],
-            ),
+                      return;
+                      // if (jsonDecode(value['status']) == "200") {
+                      //   Navigator.pushReplacement(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => FinalNotificationScreen(),
+                      //       ));
+                      // } else {
+                      //   return;
+                      // }
+                    });
+                    loading = !loading;
+                    setState(() {});
+                    // fetchData();
+                    loading = !loading;
+                    isSelectionMode = false;
+                    setState(() {});
+                  },
+                  label: const Text('Mark as read',
+                      style: TextStyle(color: Colors.white))),
+            ],
           ),
         ),
       );
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
   }
 
@@ -351,7 +375,9 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
           select = false;
           markedList.clear();
         }
-        print(markedList.length);
+        if (kDebugMode) {
+          print(markedList.length);
+        }
       });
     } else {
       // Open Detail Page
@@ -366,7 +392,9 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
     } else {
       markedList.clear();
     }
-    print(markedList.length);
+    if (kDebugMode) {
+      print(markedList.length);
+    }
     // If false will be available then it will select all the checkbox
     // If there will be no false then it will de-select all
     selectedFlag.updateAll((key, value) => isFalseAvailable);
@@ -396,3 +424,40 @@ Future<List<dynamic>> fetchData(int currentPage, int pageSize) async {
   });
   return items;
 }
+
+
+ List<Result> demoResults = [
+    Result(
+      id: 1,
+      userId: 101,
+      image: "image_url_1",
+      title: "Sample Title 1",
+      description: "This is a sample description 1.",
+      readStatus: "No",
+      createdAt: DateTime.parse("2024-03-04T12:00:00Z"),
+      updatedAt: null,
+      deletedAt: null,
+    ),
+    Result(
+      id: 2,
+      userId: 102,
+      image: null,
+      title: "Sample Title 2",
+      description: "This is a sample description 2.",
+      readStatus: "Yes",
+      createdAt: DateTime.parse("2024-03-04T13:00:00Z"),
+      updatedAt: DateTime.parse("2024-03-04T14:00:00Z"),
+      deletedAt: null,
+    ),
+    Result(
+      id: 3,
+      userId: 103,
+      image: "image_url_3",
+      title: "Sample Title 3",
+      description: "This is a sample description 3.",
+      readStatus: "No",
+      createdAt: DateTime.parse("2024-03-04T14:00:00Z"),
+      updatedAt: null,
+      deletedAt: DateTime.parse("2024-03-04T15:00:00Z"),
+    ),
+  ];
