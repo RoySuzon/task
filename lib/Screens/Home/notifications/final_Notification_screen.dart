@@ -280,7 +280,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                     _selectAll();
                   },
                   label: const Text(
-                    "All Select",
+                    "Select All",
                     style: TextStyle(color: Colors.white),
                   )),
               ActionChip(
