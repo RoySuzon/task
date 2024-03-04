@@ -36,7 +36,9 @@ class _NotificationScreenPrecticeState
   @override
   void initState() {
     fetchData();
-
+setState(() {
+  
+});
     super.initState();
   }
 
@@ -73,11 +75,7 @@ class _NotificationScreenPrecticeState
           : Column(
               children: [
                 Expanded(
-                  child: FutureBuilder(
-                    future: ApiController()
-                        .getNotificationList(page: 1, pageSize: 100),
-                    builder: (context, snapshot) {
-                      return ListView.builder(
+                  child:  ListView.builder(
                         itemBuilder: (builder, index) {
                           final data = staticData[index];
                           selectedFlag[index] = selectedFlag[index] ?? false;
@@ -98,9 +96,7 @@ class _NotificationScreenPrecticeState
                           );
                         },
                         itemCount: staticData.length,
-                      );
-                    },
-                  ),
+                      )
                 ),
                 _buildSelectAllButton()
               ],

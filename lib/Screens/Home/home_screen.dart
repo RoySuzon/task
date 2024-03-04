@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:task/Controllers/api_controller.dart';
-import 'package:task/Screens/Home/notifications/infinity_scroll_screen.dart';
-import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
+import 'package:task/Screens/Home/notifications/final_Notification_screen.dart';
+// import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
 import 'package:task/Screens/Home/widgets/custome_tab_bar.dart';
 // import 'package:task/models/notification_model.dart';
 
@@ -19,15 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // List<NotificationModel> notifications = [];
   @override
   void initState() {
-    // ApiController().getNotificationList().then((value) {
-    //   // print(jsonDecode(value)['data']['results']);
-    //   // print(value);
-    //   notificationLength = jsonDecode(value)['data']['totalunread'].toString();
-    //   // print(notificationLength);
-    //   // notifications = notificationModelFromJson(
-    //   //     jsonEncode(jsonDecode(value)['data']['results']));
-    //   setState(() {});
-    // });
     super.initState();
   }
 
@@ -69,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => NotificationScreenPrectice()));
+                          builder: (context) => FinalNotificationScreen()));
                   // builder: (context) => const NotificationScreen()));
                 },
           icon: Icon(Icons.notifications),

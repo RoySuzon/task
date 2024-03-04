@@ -11,8 +11,8 @@ class CustomeTabBar extends StatefulWidget {
 }
 
 class _CustomeTabBarState extends State<CustomeTabBar> {
-  bool profileSelect = false;
-  int select = 0;
+  bool profileSelect = true;
+  int select = -2;
   @override
   Widget build(BuildContext context) {
     return Container(
