@@ -16,8 +16,8 @@ class _NotificationScreenPrecticeState
     extends State<NotificationScreenPrectice> {
   bool isSelectionMode = false;
   bool loading = false;
-  List<NotificationModel> staticData = [];
-  List<NotificationModel> markedList = [];
+  List<Result> staticData = [];
+  List<Result> markedList = [];
   Map<int, bool> selectedFlag = {};
 
   fetchData() async {
@@ -27,7 +27,7 @@ class _NotificationScreenPrecticeState
         .getNotificationList(page: 1, pageSize: 100)
         .then((value) {
       staticData = notificationModelFromJson(
-          jsonEncode(jsonDecode(value)['data']['results']));
+          value).data!.results!.toList();
       loading = !loading;
       setState(() {});
     });

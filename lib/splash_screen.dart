@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:task/Common/app_color.dart';
 import 'package:task/Screens/Auth/login_screen.dart';
 import 'package:task/Screens/Home/home_screen.dart';
 
@@ -53,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
 Widget myCircularPrograce({Color? color}) {
   return Center(
     child: CircularProgressIndicator(
-      color: color ?? Colors.white,
+      color: color ?? AppColor.textColor,
     ),
   );
 }

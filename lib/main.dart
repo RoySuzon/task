@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 // import 'package:get/route_manager.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:task/Screens/Home/notifications/final_Notification_screen.dart';
+import 'package:task/Common/app_color.dart';
+// import 'package:task/Screens/Home/notifications/final_Notification_screen.dart';
 
 import 'package:task/splash_screen.dart';
 
@@ -21,12 +22,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Task',
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF226168),
+        scaffoldBackgroundColor: AppColor.mainColor,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.white,
+          seedColor: AppColor.textColor,
         ),
+        appBarTheme: const AppBarTheme(backgroundColor: AppColor.mainColor,shadowColor: Colors.white),
         useMaterial3: false,
       ),
       home:  SplashScreen(),

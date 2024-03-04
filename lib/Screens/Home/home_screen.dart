@@ -5,6 +5,7 @@ import 'package:task/Controllers/api_controller.dart';
 import 'package:task/Screens/Home/notifications/final_Notification_screen.dart';
 // import 'package:task/Screens/Home/notifications/notification_screen_prectice.dart';
 import 'package:task/Screens/Home/widgets/custome_tab_bar.dart';
+import 'package:task/models/notification_model.dart';
 // import 'package:task/models/notification_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return _notifications(notificationLength =
-                    jsonDecode(snapshot.data)['data']['totalunread']
+                    notificationModelFromJson(snapshot.data).data!.totalunread.toString()
                         .toString());
               } else {
                 return _notifications('');

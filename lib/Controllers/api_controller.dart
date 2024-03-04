@@ -49,7 +49,7 @@ class ApiController {
           Uri.parse(
               "${baseUrl}get_notification?page=${page ?? ''}&pageSize=${pageSize ?? ''}"),
           headers: getHeader(await getToken()));
-      jsonDecode(res.body)['status'] == "200";
+     
       return res.body;
     } catch (e) {
       return jsonEncode({

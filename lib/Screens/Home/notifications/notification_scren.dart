@@ -16,7 +16,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  List<NotificationModel> tempNotification = [];
+  List<Result> tempNotification = [];
   bool loading = false;
   bool bottomCircular = false;
   int pageSize = 10;
@@ -28,7 +28,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         .getNotificationList(page: page, pageSize: pageSize)
         .then((value) {
       for (var item in notificationModelFromJson(
-          jsonEncode(jsonDecode(value)['data']['results']))) {
+          value).data!.results!.toList()) {
         tempNotification.add(item);
       }
     });
@@ -43,12 +43,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
         .getNotificationList(page: page, pageSize: pageSize)
         .then((value) {
       for (var item in notificationModelFromJson(
-          jsonEncode(jsonDecode(value)['data']['results']))) {
+          value).data!.results!.toList()) {
         tempNotification.add(item);
       }
-      if (notificationModelFromJson(
-              jsonEncode(jsonDecode(value)['data']['results']))
-          .isEmpty) {
+      if (notificationModelFromJson(value).data!.results!.isEmpty) {
         getToast('"This is Center Short Toast"');
       }
     });

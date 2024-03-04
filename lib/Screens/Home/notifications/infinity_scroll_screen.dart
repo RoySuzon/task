@@ -45,9 +45,9 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
   Stream<List<dynamic>> get dataStream => _dataStreamController.stream;
   final List<dynamic> _currentItems = [];
   bool isMarked = false;
-  List<NotificationModel> markList = [];
+  List<Result> markList = [];
   bool markAll = false;
-  List<NotificationModel> tempNotification = [];
+  List<Result> tempNotification = [];
   late int length;
   bool marked = false;
   List<int> indexList = [];
@@ -171,7 +171,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                         itemCount: items!.length,
                         itemBuilder: (context, index) {
                           tempNotification =
-                              notificationModelFromJson(items.toString());
+                              notificationModelFromJson(items.toString()).data!.results!.toList();
 
                           length = tempNotification.length;
 

@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:task/Common/app_color.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
 import 'package:task/splash_screen.dart';
@@ -44,8 +46,6 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
       StreamController<List<dynamic>>();
   Stream<List<dynamic>> get dataStream => _dataStreamController.stream;
   final List<dynamic> _currentItems = [];
-
-  List<NotificationModel> tempNotification = [];
   int _currentPage = 1;
   final int _pageSize = 10;
   late final ScrollController _scrollController;
@@ -111,7 +111,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: AppColor.mainColor,
       appBar: AppBar(
         title: const Text('Notifications'),
         actions: [
@@ -152,8 +152,10 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                   return const Center(child: Text('No data available.'));
                 } else {
                   // Display the paginated data
-                  staticData =
-                      notificationModelFromJson(snapshot.data.toString());
+
+                  staticData = snapshot.data!
+                      .map((e) => Result.fromJson(jsonDecode(e)))
+                      .toList();
                   return ListView(
                     // reverse: true,
                     padding: EdgeInsets.zero,
@@ -162,27 +164,31 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                     shrinkWrap: true,
                     children: [
                       ListView.builder(
-                        padding: EdgeInsets.zero,
+                        // padding: EdgeInsets.symmetric(vertical: 5),
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: staticData.length,
                         itemBuilder: (context, index) {
-                          final data = staticData[index];
+                          Result data = staticData[index];
                           selectedFlag[index] = selectedFlag[index] ?? false;
                           bool isSelected = selectedFlag[index]!;
-                          return ListTile(
-                            onLongPress: () => onLongPress(isSelected, index),
-                            onTap: () => onTap(isSelected, index),
-                            title: Row(
-                              children: [
-                                data.readStatus != 'Yes'
-                                    ? Icon(Icons.circle, size: 10)
-                                    : SizedBox(),
-                                Text("  ${data.title} ${data.createdAt}"),
-                              ],
+                          return Card(
+                            color: AppColor.greyColor.withOpacity(.7),
+                            shadowColor: AppColor.greyColor,
+                            child: ListTile(
+                              onLongPress: () => onLongPress(isSelected, index),
+                              onTap: () => onTap(isSelected, index),
+                              title: Row(
+                                children: [
+                                  data.readStatus != 'Yes'
+                                      ? Icon(Icons.circle, size: 10)
+                                      : SizedBox(),
+                                  Text("  ${data.title}  ${ DateFormat.yMMMMEEEEd().format(data.updatedAt??DateTime.now())}"),
+                                ],
+                              ),
+                              subtitle: Text("${data.title}"),
+                              leading: _buildSelectIcon(isSelected, index),
                             ),
-                            subtitle: Text("${data.title}"),
-                            leading: _buildSelectIcon(isSelected, index),
                           );
                         },
                       ),
@@ -228,7 +234,11 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
       );
     } else {
       return CircleAvatar(
-        child: Text(staticData[index].id.toString()),
+        backgroundColor: AppColor.mainColor,
+        child: Text(
+          staticData[index].id.toString(),
+          style: TextStyle(color: Colors.white),
+        ),
       );
     }
   }
@@ -245,12 +255,16 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
               !isFalseAvailable
                   ? Icons.check_box
                   : Icons.check_box_outline_blank_outlined,
+              color: Theme.of(context).primaryColor,
             ),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 const Text('All'),
                 TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(AppColor.mainColor)),
                     //Delete Function
                     onPressed: () async {
                       List<int> ids = [];
@@ -258,7 +272,13 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                         ids.add(element.id!);
                       }
                       await ApiController().deleteApi(ids).then((value) {
-                        jsonDecode(value)['statu'] == "200";
+                         if(  jsonDecode(value)['status'] == "200")
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FinalNotificationScreen(),
+                            ));
+                            return;
                       });
                       loading = !loading;
                       setState(() {});
@@ -267,7 +287,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                       isSelectionMode = false;
                       setState(() {});
                     },
-                    child: Text(markedList.length == staticData.length
+                    child: Text(style: TextStyle(color: AppColor.peachColor), markedList.length == staticData.length
                         ? 'Delete All'
                         : "Delete")),
                 TextButton(
@@ -280,7 +300,24 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                         ids.add(element.id!);
                       }
 
-                      await ApiController().markAsReadApi(ids);
+                      await ApiController().markAsReadApi(ids).then((value) {
+                        if(  jsonDecode(value)['status'] == "200")
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FinalNotificationScreen(),
+                            ));
+                            return;
+                        // if (jsonDecode(value['status']) == "200") {
+                        //   Navigator.pushReplacement(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => FinalNotificationScreen(),
+                        //       ));
+                        // } else {
+                        //   return;
+                        // }
+                      });
                       loading = !loading;
                       setState(() {});
                       // fetchData();
@@ -340,9 +377,8 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
 
   bool isSelectionMode = false;
   bool loading = false;
-  List<NotificationModel> staticData = [];
-  Map<int, List<NotificationModel>> markLiseted = {};
-  List<NotificationModel> markedList = [];
+  List<Result> staticData = [];
+  List<Result> markedList = [];
   Map<int, bool> selectedFlag = {};
   bool select = false;
 }
@@ -352,7 +388,8 @@ Future<List<dynamic>> fetchData(int currentPage, int pageSize) async {
   await ApiController()
       .getNotificationList(page: currentPage, pageSize: pageSize)
       .then((value) {
-    final itemList = jsonDecode(value)['data']['results'] as List<dynamic>;
+    final itemList =
+        notificationModelFromJson(value).data!.results as List<dynamic>;
     for (final item in itemList) {
       items.add(jsonEncode(item));
     }

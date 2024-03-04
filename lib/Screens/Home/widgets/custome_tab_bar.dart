@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+import 'package:task/Common/app_color.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/user_info.dart';
 
@@ -11,12 +13,14 @@ class CustomeTabBar extends StatefulWidget {
 }
 
 class _CustomeTabBarState extends State<CustomeTabBar> {
+ 
   bool profileSelect = true;
   int select = -2;
   @override
   Widget build(BuildContext context) {
+     Color tappedColor = AppColor.textColor;
     return Container(
-      color: Colors.amber,
+      // color: Colors.amber,
       height: double.infinity,
       width: double.maxFinite,
       child: Stack(
@@ -62,15 +66,15 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
                                         // topLeft: Radius.circular(10),
                                         topRight: Radius.circular(30))
                                     : null,
-                        color: select == index ? Colors.red : Colors.white,
+                        color: select == index ? tappedColor : Colors.white,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             TabBarData.tabList[index].icon,
-                            color:
-                                select == index ? Colors.white : Colors.black,
+                            // color:
+                            //     select == index ? Colors.black : Colors.black,
                           ),
                           select == index
                               ? const SizedBox()
@@ -112,7 +116,7 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
                   width: profileSelect ? 80 : 100,
                   height: profileSelect ? 80 : 100,
                   decoration: BoxDecoration(
-                      color: profileSelect ? Colors.red : Colors.white,
+                      color: profileSelect ? tappedColor : Colors.white,
                       borderRadius:
                           profileSelect ? BorderRadius.circular(20) : null),
                   child: Column(
@@ -185,14 +189,23 @@ class ProfileScreen extends StatelessWidget {
     // UserInfo data = getInfo();
 
     return Column(
-      
       mainAxisSize: MainAxisSize.max,
       children: [
-      Card(child: ListTile(title: Text( getInfo().data!.userDetails!.name!.toUpperCase()),)),
-        Text(
-           getInfo().data!.userDetails!.name.toString(),
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        Card(
+            child: Column(
+              children: [
+                ListTile(
+                          title: Text(getInfo().data!.userDetails!.name!.toUpperCase()),
+                        ),
+           
+                ListTile(
+                          title: Text(getInfo().data!.userDetails!.email!.toLowerCase()),
+                        ),
+                ListTile(
+                          title: Text(DateFormat.yMMMMEEEEd().format(getInfo().data!.userDetails!.updatedAt!)),
+                        ),
+              ],
+            )),
         
       ],
     );

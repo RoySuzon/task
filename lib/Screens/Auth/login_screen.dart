@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
+import 'package:task/Common/app_color.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/Screens/Home/home_screen.dart';
+import 'package:task/Screens/Home/notifications/notification_scren.dart';
 import 'package:task/models/user_info.dart';
+import 'package:task/splash_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool loading = false;
   final _userNameController = TextEditingController(text: '0187832241');
   final _passwordController = TextEditingController(text: '123456');
 
@@ -30,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.mainColor,
       // appBar: AppBar(
       //   title: const Text('Login Screen'),
       // ),
@@ -57,37 +64,53 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _passwordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   hintText: 'Password', border: OutlineInputBorder()),
 
               // obscuringCharacter: '*',
               keyboardType: TextInputType.visiblePassword,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             MaterialButton(
               minWidth: double.infinity,
               height: 50,
-              color: Colors.green,
+              color: Colors.black,
               onPressed: () async {
                 if (_userNameController.text.trim().isNotEmpty &&
                     _passwordController.text.trim().isNotEmpty) {
+                  loading = true;
+                  setState(() {});
                   await ApiController()
                       .loginApi(
                           userName: _userNameController.text.toString().trim(),
                           passWord: _passwordController.text.toString().trim())
                       .then((value) async {
-                    await Hive.box('userInfo').put('userInfo', value);
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ));
+                    if (jsonDecode(value)['status'] == "200") {
+                      await Hive.box('userInfo').put('userInfo', value);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ));
+                          getToast(userInfoFromJson(value).message.toString());
+                    } else {
+                      loading = false;
+                      getToast(jsonDecode(value)['message'].toString());
+                      setState(() {});
+                      return;
+                    }
                   });
                 } else {
+                  getToast('Please check password or UserName');
                   print('error');
                 }
               },
-              child: Text('Sign In'),
+              child: loading
+                  ? myCircularPrograce()
+                  : Text(
+                      'Sign In',
+                      style: TextStyle(color: Colors.white),
+                    ),
             ),
             // Expanded(
             //     child: ListView.builder(
