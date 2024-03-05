@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task/Controllers/api_controller.dart';
@@ -124,7 +125,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
               Navigator.pop(context);
               isMarked = false;
             },
-            icon: Icon(Icons.arrow_back)),
+            icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
         title: const Text('Notifications'),
         actions: [
@@ -161,7 +162,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                     // reverse: true,
                     padding: EdgeInsets.zero,
                     controller: _scrollController,
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     children: [
                       ListView.separated(
@@ -203,7 +204,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                                                   markAll
                                               ? Icons.check_box
                                               : Icons.check_box_outline_blank))
-                                      : SizedBox(),
+                                      : const SizedBox(),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -215,10 +216,10 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                                                         .readStatus
                                                         .toString() ==
                                                     'Yes'
-                                                ? SizedBox(
+                                                ? const SizedBox(
                                                     // width: 10,
                                                     )
-                                                : Icon(
+                                                : const Icon(
                                                     Icons.circle,
                                                     color: Colors.red,
                                                     size: 10,
@@ -228,7 +229,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                                                   .id
                                                   .toString(),
                                               style:
-                                                  TextStyle(color: Colors.red),
+                                                  const TextStyle(color: Colors.red),
                                             ),
                                             Expanded(
                                               child: Text(
@@ -236,19 +237,19 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                                                     .createdAt
                                                     .toString(),
                                                 textAlign: TextAlign.end,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.red),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 15),
+                                        const SizedBox(height: 15),
                                         Text(
                                           tempNotification[index]
                                               .description
                                               .toString(),
                                           textAlign: TextAlign.end,
-                                          style: TextStyle(color: Colors.red),
+                                          style: const TextStyle(color: Colors.red),
                                         ),
                                       ],
                                     ),
@@ -259,7 +260,7 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                           );
                         },
                         separatorBuilder: (BuildContext context, int index) {
-                          return Divider(
+                          return const Divider(
                             height: 0,
                             thickness: 2,
                             endIndent: 20,
@@ -298,7 +299,9 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                           }
                           setState(() {});
 
-                          print(markList.length);
+                          if (kDebugMode) {
+                            print(markList.length);
+                          }
                         },
                         icon: Icon(
                           markAll || length == markList.length
@@ -306,10 +309,10 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                               : Icons.check_box_outline_blank_outlined,
                           color: Colors.black,
                         )),
-                    title: Text('Mark All'),
+                    title: const Text('Mark All'),
                   ),
                 )
-              : SizedBox()
+              : const SizedBox()
         ],
       ),
     );

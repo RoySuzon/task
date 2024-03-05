@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:task/Common/app_color.dart';
 import 'package:task/Controllers/api_controller.dart';
-import 'package:task/models/user_info.dart';
 
 class CustomeTabBar extends StatefulWidget {
   const CustomeTabBar({super.key});
@@ -19,7 +17,7 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
   @override
   Widget build(BuildContext context) {
      Color tappedColor = AppColor.textColor;
-    return Container(
+    return SizedBox(
       // color: Colors.amber,
       height: double.infinity,
       width: double.maxFinite,
@@ -155,7 +153,7 @@ class _CustomeTabBarState extends State<CustomeTabBar> {
               bottom: 0,
               top: 0,
               child: profileSelect
-                  ? ProfileScreen()
+                  ? const ProfileScreen()
                   : Icon(TabBarData.tabList[select].icon))
         ],
       ),

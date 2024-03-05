@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
 import 'package:task/models/user_info.dart';
@@ -63,21 +64,27 @@ class ApiController {
 //mark as read api
   Future<dynamic> markAsReadApi(List<int> ids) async {
     final data = jsonEncode(ids.toString());
-    print(data);
+    if (kDebugMode) {
+      print(data);
+    }
     try {
       final body = jsonEncode({
         "notification_Ids": ids,
         "status": "Read"
         // "status": "Delete"
       });
-      print("$ids");
+      if (kDebugMode) {
+        print("$ids");
+      }
       final res = await post(Uri.parse("${baseUrl}update_notification_status"),
           headers: getHeader(await getToken()), body: body);
       // jsonDecode(res.body)['status'] == "200";
       log(res.body);
       return res.body;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return jsonEncode({
         "status": '404',
         "message": 'Link is not Vailid',
@@ -89,21 +96,27 @@ class ApiController {
 //Delete  api
   Future<dynamic> deleteApi(List<int> ids) async {
     final data = jsonEncode(ids.toString());
-    print(data);
+    if (kDebugMode) {
+      print(data);
+    }
     try {
       final body = jsonEncode({
         "notification_Ids": ids,
         // "status": "Read"
         "status": "Delete"
       });
-      print("$ids");
+      if (kDebugMode) {
+        print("$ids");
+      }
       final res = await post(Uri.parse("${baseUrl}update_notification_status"),
           headers: getHeader(await getToken()), body: body);
       // jsonDecode(res.body)['status'] == "200";
       log(res.body);
       return res.body;
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return jsonEncode({
         "status": '404',
         "message": 'Link is not Vailid',

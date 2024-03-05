@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:task/Controllers/api_controller.dart';
 import 'package:task/models/notification_model.dart';
@@ -61,12 +62,14 @@ setState(() {
                   // : isSelectionMode = selectedFlag.containsValue(true);
                   selectedFlag.updateAll((key, value) => false);
                   if (!isSelectionMode) markedList.clear();
-                  print(markedList.length);
+                  if (kDebugMode) {
+                    print(markedList.length);
+                  }
                   setState(() {});
                 },
                 child: Center(
                     child:
-                        !isSelectionMode ? Icon(Icons.edit) : Text('Cancel'))),
+                        !isSelectionMode ? const Icon(Icons.edit) : const Text('Cancel'))),
           )
         ],
       ),
@@ -86,8 +89,8 @@ setState(() {
                             title: Row(
                               children: [
                                 data.readStatus != 'Yes'
-                                    ? Icon(Icons.circle, size: 10)
-                                    : SizedBox(),
+                                    ? const Icon(Icons.circle, size: 10)
+                                    : const SizedBox(),
                                 Text("  ${data.title} ${data.createdAt}"),
                               ],
                             ),
@@ -113,7 +116,9 @@ setState(() {
         } else {
           markedList.remove(staticData[index]);
         }
-        print(markedList.length);
+        if (kDebugMode) {
+          print(markedList.length);
+        }
         isSelectionMode = selectedFlag.containsValue(true);
         if (isSelectionMode == false) {
           select = false;
@@ -186,7 +191,9 @@ setState(() {
                           (element) => element.readStatus == 'Yes');
                       for (var element in markedList) {
                         ids.add(element.id!);
-                        print(ids);
+                        if (kDebugMode) {
+                          print(ids);
+                        }
                       }
                       await ApiController().markAsReadApi(ids);
                       loading = !loading;
@@ -196,14 +203,14 @@ setState(() {
                       isSelectionMode = false;
                       setState(() {});
                     },
-                    child: Text('Mark as read')),
+                    child: const Text('Mark as read')),
               ],
             ),
           ),
         ),
       );
     } else {
-      return SizedBox();
+      return const SizedBox();
     }
   }
 

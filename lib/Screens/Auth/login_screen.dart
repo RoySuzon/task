@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
@@ -58,10 +61,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
             TextField(
               controller: _userNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   hintText: 'UserName', border: OutlineInputBorder()),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             TextField(
               controller: _passwordController,
@@ -104,12 +107,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 } else {
                   getToast('Please check password or UserName',color: Colors.red);
-                  print('error');
+                  if (kDebugMode) {
+                    print('error');
+                  }
                 }
               },
               child: loading
                   ? myCircularPrograce()
-                  : Text(
+                  : const Text(
                       'Sign In',
                       style: TextStyle(color: Colors.white),
                     ),

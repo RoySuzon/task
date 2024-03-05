@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:task/Common/app_color.dart';
@@ -69,7 +69,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         // backgroundColor: Colors.white,
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Notifications'),
+          title: const Text('Notifications'),
           actions: [
             GestureDetector(
               onTap: () {
@@ -90,7 +90,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             loading
                 ? myCircularPrograce()
                 : ListView.separated(
-                    physics: BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
                     padding: EdgeInsets.zero,
                     itemBuilder: (context, index) => Container(
@@ -105,17 +105,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 Text((index + 1).toString()),
                                 tempNotification[index].readStatus.toString() ==
                                         'Yes'
-                                    ? SizedBox(
+                                    ? const SizedBox(
                                         width: 10,
                                       )
-                                    : Icon(
+                                    : const Icon(
                                         Icons.circle,
                                         color: Colors.red,
                                         size: 10,
                                       ),
                                 Text(
                                   tempNotification[index].title.toString(),
-                                  style: TextStyle(color: Colors.red),
+                                  style: const TextStyle(color: Colors.red),
                                 ),
                                 Expanded(
                                   child: Text(
@@ -123,16 +123,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         .createdAt
                                         .toString(),
                                     textAlign: TextAlign.end,
-                                    style: TextStyle(color: Colors.red),
+                                    style: const TextStyle(color: Colors.red),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             Text(
                               tempNotification[index].description.toString(),
                               textAlign: TextAlign.end,
-                              style: TextStyle(color: Colors.red),
+                              style: const TextStyle(color: Colors.red),
                             ),
                           ],
                         ),
@@ -140,7 +140,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                     itemCount: tempNotification.length,
                     separatorBuilder: (BuildContext context, int index) {
-                      return Divider(
+                      return const Divider(
                         height: 0,
                         thickness: 2,
                         endIndent: 20,
@@ -157,7 +157,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ? Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: myCircularPrograce(color: Colors.black))
-                  : SizedBox(),
+                  : const SizedBox(),
             )
           ],
         )

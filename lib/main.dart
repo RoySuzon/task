@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(backgroundColor: AppColor.mainColor,shadowColor: Colors.white),
         useMaterial3: false,
       ),
-      home:  SplashScreen(),
+      home:  const SplashScreen(),
     );
   }
 }

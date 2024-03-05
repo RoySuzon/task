@@ -1,3 +1,7 @@
+// ignore: file_names
+// ignore: file_names
+// ignore_for_file: file_names, duplicate_ignore
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -325,12 +329,13 @@ class _InfiniteScrollPaginationState extends State<InfiniteScrollPagination> {
                     }
 
                     await ApiController().markAsReadApi(ids).then((value) {
-                      if (jsonDecode(value)['status'] == "200")
+                      if (jsonDecode(value)['status'] == "200") {
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const FinalNotificationScreen(),
                             ));
+                      }
                       return;
                       // if (jsonDecode(value['status']) == "200") {
                       //   Navigator.pushReplacement(
